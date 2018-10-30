@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div style="display: inline-block;"><h4 text-align: left><a href="/login">Log In</a>   <a href="/">Home</a>   <a href="blog">Main Blog Page</a>    <a href= "newpost">Add A Blog Entry</a>    <a href= "/logout">Log Out</a>
+    </h4>
+    </div>
+    <h1><center>Blog Users</center></h1>
+    <ul>
+        {% for users in users %}
+        <li>{{blog.users}}
+        </li>
+    </ul>
+
+{% endblock %}
