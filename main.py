@@ -16,9 +16,10 @@ class Blog(db.Model):
     body = db.Column(db.String(1000))
     owner_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
-    def __init__(self, title, body):
+    def __init__(self, title, body, owner):
         self.title = title
         self.body = body
+        self.owner = owner
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -33,12 +34,12 @@ class User(db.Model):
 
 @app.route('/newpost', methods=['POST', 'GET'])
 def newpost():
-    owner = User.query.filter_by(username = ['username']).first()
+    owner = User.query.filter_by(username = session['username']).first()
     if request.method == 'POST':
 
         title_name = request.form['entryfortitle']
         post_name = request.form['writingarea']
-        new_blog = Blog(title_name, post_name)
+        new_blog = Blog(title_name, post_name, owner)
         title_error = ''
         writingarea_error = ''
         if title_name == '':
@@ -65,19 +66,18 @@ def blog():
 
     else:
         blogs = Blog.query.all()
-        user_id =int(request.args.get('user'))
+        username = request.args.get('user')
 
-        if user_id:
-        
-            blogs =Blog.query.filter(owner_id = user_id)
+        if username:
+            user = User.query.filter_by(username=username).first()
+            blogs = Blog.query.filter_by(owner_id = user.id)
 
         return render_template("blog.html", blogs=blogs)
 
 @app.route('/', methods=['POST','GET'])
 def index():
-    owner = User.query.filter_by(username=session['username']).first()
-
-    return render_template("index.html", owner=owner)
+    users= User.query.all()
+    return render_template("index.html", users=users)
 
 
 
@@ -93,7 +93,7 @@ def login():
         username = request.form['username']
         password = request.form['password']
         user = User.query.filter_by(username=username).first()
-        if user and check_pw_hash(password, user.pw_hash):
+        if user and password == user.password:
             session['username'] = username
             flash("Logged in")
             return redirect('/newpost')
