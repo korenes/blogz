@@ -2,9 +2,6 @@
 
 {% block content %}
 
-{% if blogs|length < 1 %}
-<p>No blog posts yet</p>
-{% else %}
 
   
         {% for blog in blogs %}
@@ -16,7 +13,5 @@
         
         {% endfor %}
  
-
-{% endif %}
 
 {% endblock %}

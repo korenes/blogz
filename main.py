@@ -62,6 +62,7 @@ def blog():
     blogpost=request.args.get('id')
     if blogpost is not None:
         blogs = Blog.query.filter_by(id=blogpost)
+       
         return render_template("blogpage.html", blogs=blogs)
 
     else:
@@ -71,7 +72,7 @@ def blog():
         if username:
             user = User.query.filter_by(username=username).first()
             blogs = Blog.query.filter_by(owner_id = user.id)
-
+        
         return render_template("blog.html", blogs=blogs)
 
 @app.route('/', methods=['POST','GET'])
@@ -110,6 +111,8 @@ def signup():
         verify = request.form['verify']
         if username == '' or password == '' or verify == '':
             flash('Please complete all fields, fields cannot be left blank.')
+            print (username)
+            return render_template("signup.html", username=username)
         if password != verify:
             flash('Passwords do not match!')
         if (len(username) <3) or (len(password) <3):
@@ -122,7 +125,7 @@ def signup():
             db.session.add(new_user)
             db.session.commit()
             session['username'] = username
-            return redirect('/')
+            return redirect('/newpost')
         else:
             
             flash('Username already exists')
